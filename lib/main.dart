@@ -61,10 +61,21 @@ class _HomeScreenState extends State<HomeScreen>{
         onPressed: () async {
           final Task? newTask = await Navigator.push(
             context,
-            MaterialPageRoute(
-              builder: (context) => AddTaskScreen(),
+            PageRouteBuilder(
+              pageBuilder: (context, animation, secondaryAnimation) => AddTaskScreen(),
+              transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                final offsetAnimation = Tween<Offset>(
+                  begin: Offset(1.0, 0.0),
+                  end: Offset.zero,
+                ).animate(animation);
+                return SlideTransition(
+                  position: offsetAnimation,
+                  child: child,
+                );
+              },
             ),
           );
+
           if(newTask != null){
             setState((){
               TaskRepository.tasks.add(newTask);
@@ -82,7 +93,7 @@ class AddTaskScreen extends StatelessWidget{
 
   final TextEditingController titleController = TextEditingController();
   final TextEditingController deadlineController = TextEditingController();
-
+  final TextEditingController priorityController = TextEditingController();
   @override
   Widget build(BuildContext context){
     return Scaffold(
@@ -100,13 +111,27 @@ class AddTaskScreen extends StatelessWidget{
             border: OutlineInputBorder(),
           ),
         ),
+            TextField(
+              controller: deadlineController,
+              decoration: InputDecoration(
+                labelText: "Termin",
+                border: OutlineInputBorder(),
+              ),
+            ),
+            TextField(
+              controller: priorityController,
+              decoration: InputDecoration(
+                labelText: "Priorytet",
+                border: OutlineInputBorder(),
+              ),
+            ),
             ElevatedButton(
               onPressed: () {
                 final newTask = Task(
                   title: titleController.text,
                   deadline: deadlineController.text,
                   done: false,
-                  priority: '',
+                  priority: priorityController.text,
                 );
                 Navigator.pop(context, newTask);
               },
