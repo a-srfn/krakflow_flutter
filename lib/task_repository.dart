@@ -1,4 +1,4 @@
-import'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 class TaskRepository {
   static List<Task> tasks = [
     Task(
@@ -26,29 +26,42 @@ class TaskRepository {
 class Task{
   final String title;
   final String deadline;
-  final bool done;
+  bool done;
   final String priority;
   Task({required this.title, required this.deadline, required this.done, required this.priority});
 }
 class TaskCard extends StatelessWidget{
+  final bool done;
+  final ValueChanged<bool?>? onChanged;
   final String title;
   final String subtitle;
-  final IconData icon;
-  final String priority;
+  final VoidCallback? onTap;
 
   const TaskCard({
     super.key,
     required this.title,
     required this.subtitle,
-    required this.icon,
-    required this.priority
+    required this.done,
+    this.onTap,
+    this.onChanged,
   });
   @override
   Widget build(BuildContext context){
     return Card(
       child: ListTile(
-        leading: Icon(icon),
-        title: Text(title),
+        onTap: onTap,
+        leading: Checkbox(
+          value: done,
+          onChanged: onChanged,
+        ),
+        title: Text(
+            title,
+        style: TextStyle(
+          decoration: done
+              ? TextDecoration.lineThrough
+              : TextDecoration.none,
+          color: done ? Colors.grey : Colors.black,
+        )),
         subtitle: Text(subtitle),
       ),
     );
