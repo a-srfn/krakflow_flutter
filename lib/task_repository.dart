@@ -23,6 +23,7 @@ class TaskRepository {
         priority: "wysoki")
   ];
 }
+
 class Task{
   final String title;
   final String deadline;

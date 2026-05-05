@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'task_repository.dart';
+import 'task_api_service.dart';
 void main() {
   runApp(MyApp());
 }
@@ -24,6 +25,25 @@ class _HomeScreenState extends State<HomeScreen>{
 
   String selectedFilter = "wszystkie";
 
+  bool isLoading = true;
+  String? error;
+
+  @override
+  void initState(){
+    super.initState();
+    loadTasks();
+  }
+  void loadTasks() async{
+    try{
+      final tasks = await TaskApiService.fetchTasks();
+      TaskRepository.tasks = tasks;
+    } catch (e){
+      error = e.toString();
+    }
+    setState(() {
+      isLoading = false;
+    });
+  }
   void _showDeleteAllDialog() {
     showDialog(
       context: context,
@@ -61,6 +81,16 @@ class _HomeScreenState extends State<HomeScreen>{
   }
   @override
   Widget build(BuildContext context){
+    if(isLoading){
+      return Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+    if (error != null){
+      return Scaffold(
+        body: Center(child: Text("Błąd: $error")),
+      );
+    }
     int completedTasks = TaskRepository.tasks.where((task) => task.done).length;
 
     List<Task> filteredTasks = TaskRepository.tasks;
