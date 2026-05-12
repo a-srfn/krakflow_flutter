@@ -13,10 +13,11 @@ class TaskApiService {
       final List todos = data["todos"];
       return todos.map((todo) {
         return Task(
+          id: todo["id"],
           title: todo["todo"],
-          deadline: "brak", // brak w API → mockujemy
+          deadline: "brak",
           done: todo["completed"],
-          priority: "średni", // brak w API → mockujemy
+          priority: "średni",
         );
       }).toList();
     } else {
